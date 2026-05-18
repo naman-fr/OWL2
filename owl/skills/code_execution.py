@@ -29,9 +29,16 @@ def execute_python_code(code: str) -> str:
         The standard output or error message from the execution.
     """
     # Note: For demonstration purposes. In production use E2B or a secure sandbox.
-    import io
     import sys
-
+    import io
+    import os
+    
+    # Track files before execution
+    try:
+        before_files = set(os.listdir("."))
+    except Exception:
+        before_files = set()
+        
     original_stdout = sys.stdout
     sys.stdout = io.StringIO()
     try:
@@ -42,7 +49,16 @@ def execute_python_code(code: str) -> str:
         output = f"Error: {e}"
     finally:
         sys.stdout = original_stdout
-
+        
+    # Track files after execution
+    try:
+        after_files = set(os.listdir("."))
+        new_files = after_files - before_files
+        if new_files:
+            output += f"\n[Execution completed. Generated new files: {', '.join(new_files)}]"
+    except Exception:
+        pass
+        
     return output
 
 

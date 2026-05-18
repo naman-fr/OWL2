@@ -37,6 +37,13 @@ def test_execute_python_code_error():
     output = execute_python_code(code)
     assert "Error: division by zero" in output
 
+def test_execute_python_code_file_creation(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    code = "with open('test_output.txt', 'w') as f:\n    f.write('hello')"
+    output = execute_python_code(code)
+    assert "Generated new files: test_output.txt" in output
+    assert (tmp_path / "test_output.txt").exists()
+
 def test_document_summarizer_skill_properties():
     skill = DocumentSummarizerSkill()
     assert skill.name == "document_summarizer"
