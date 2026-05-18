@@ -1,41 +1,54 @@
 <div align="center">
-
-</div>
-
 <h1 align="center">
-	🦉 OWL: Optimized Workforce Learning for General Multi-Agent Assistance in Real-World Task Automation
+	🦉 OWL-Workbench (by Naman)
 </h1>
-
-<div align="center">
-
-[![Documentation][docs-image]][docs-url]
-[![Discord][discord-image]][discord-url]
-[![X][x-image]][x-url]
-[![Reddit][reddit-image]][reddit-url]
-[![Wechat][wechat-image]][wechat-url]
-[![Wechat][owl-image]][owl-url]
-[![Hugging Face][huggingface-image]][huggingface-url]
-[![Star][star-image]][star-url]
-[![Package License][package-license-image]][package-license-url]
-[![Citation](https://img.shields.io/badge/Citation-arXiv%3A2505.23885-purple)](https://arxiv.org/abs/2505.23885)
-
+<h3>Production-Ready Multi-Agent Automation Platform</h3>
 </div>
 
 <hr>
 
+## 🚀 About This Project
+
+**OWL-Workbench** is an enterprise-grade extension and production deployment of the [original OWL research repository](https://github.com/camel-ai/owl). While the original OWL framework achieved state-of-the-art reasoning (scoring #1 on the GAIA benchmark), it was primarily structured as a research codebase. 
+
+I (Naman) have engineered **OWL-Workbench** to transform this research code into a highly scalable, robust, and production-ready microservices architecture. 
+
+### 🛠️ My Key Engineering Contributions
+
+1. **Modular Model Registry (`owl/models/registry.py`)**: 
+   - Decoupled hardcoded models from agent logic.
+   - Introduced a thread-safe, YAML-driven `ModelRegistry` mapping application roles directly to interchangeable LLMs (OpenAI, DeepSeek, local models).
+2. **Extensible Skill Architecture (`owl/skills/`)**: 
+   - Replaced monolithic toolsets with pluggable, independent skills.
+   - Developed native plugins including `CodeExecutionSkill`, `DocumentSummarizerSkill`, and `WebSearchSkill`.
+3. **FastAPI Microservice Gateway (`workbench/api/`)**: 
+   - Architected an asynchronous FastAPI gateway for agent task queuing and workflow execution (Addresses paradigm from upstream Issue #1481).
+4. **DevOps & Observability Stack (`docker-compose.yml`)**: 
+   - Containerized the entire ecosystem. 
+   - Embedded a fully operational telemetry stack using **Prometheus** (Port `9090`) and **Grafana** (Port `3000`) for real-time latency and request monitoring.
+5. **Open Source Bug Fixes**:
+   - **Resolved Upstream Issue [#1915](https://github.com/camel-ai/camel/issues/1915)**: Enhanced the `CodeExecutionSkill` to securely track directory states and capture/return natively generated files (e.g., plot images, JSON files) during python execution.
+6. **RAG Adapters (`owl/rag/`)**: 
+   - Built Rest and gRPC adapters to augment agents with local knowledge base integration.
+7. **CI/CD Pipeline**: 
+   - Enforced code quality via `ruff` and automated a 100% passing `pytest` suite through GitHub Actions.
+
+---
+
+*(Below is the documentation for the core OWL framework that powers the intelligence of this workbench)*
+
+<hr>
+
+<h2 align="center">
+	🦉 Original OWL Framework Documentation
+</h2>
+
 <div align="center">
-<h4 align="center">
 
-[中文阅读](https://github.com/camel-ai/owl/tree/main/README_zh.md) |
-[Community](https://github.com/camel-ai/owl#community) |
-[Installation](#️-installation) |
-[Examples](https://github.com/camel-ai/owl/tree/main/owl) |
-[Paper](https://arxiv.org/abs/2505.23885) |
-[Citation](https://github.com/camel-ai/owl#citation) |
-[Contributing](https://github.com/camel-ai/owl/graphs/contributors) |
-[CAMEL-AI](https://www.camel-ai.org/) |
+[![Documentation][docs-image]][docs-url]
+[![Citation](https://img.shields.io/badge/Citation-arXiv%3A2505.23885-purple)](https://arxiv.org/abs/2505.23885)
 
-</h4>
+</div>
 
 <div align="center" style="background-color: #f0f7ff; padding: 10px; border-radius: 5px; margin: 15px 0;">
   <h3 style="color: #1e88e5; margin: 0;">
@@ -44,30 +57,11 @@
 </div>
 
 <div align="center">
-
-🦉 OWL-Workbench is a production-ready multi-agent automation platform built upon the pioneering OWL research repository. It extends the core OWL framework with industry-grade infrastructure, modular skill plugins, an interchangeable Model Registry, robust FastAPI gateways, and full observability using Prometheus.
-
-Our vision is to revolutionize how AI agents collaborate to solve real-world tasks. By leveraging dynamic agent interactions, OWL-Workbench enables more natural, efficient, and robust task automation across diverse domains.
-
-If you find this repo useful, please consider citing our work ([citation](#-cite)).
-</div>
-
-## 🏗 OWL-Workbench Architecture
-
-The transformed OWL-Workbench platform features:
-- **Modular Model Registry**: Easily swap LLMs (OpenAI, DeepSeek, local models) using `config/models_default.yaml`.
-- **Extensible Skill Plugins**: Expand agent capabilities effortlessly with `CodeExecutionSkill`, `DocumentSummarizerSkill`, `WebSearchSkill`, etc.
-- **FastAPI Gateway**: Integrated REST API for task queuing and execution.
-- **Observability**: Prometheus metrics and Grafana dashboards via `docker-compose`.
-- **RAG Adapters**: Built-in REST and gRPC adapters to augment agents with local knowledge.
+Our vision is to revolutionize how AI agents collaborate to solve real-world tasks. By leveraging dynamic agent interactions, OWL enables more natural, efficient, and robust task automation across diverse domains.
 
 ![](./assets/owl_architecture.png)
-
 <br>
-
 </div>
-
-<!-- # Key Features -->
 
 # 📋 Table of Contents
 
