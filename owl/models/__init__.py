@@ -12,22 +12,8 @@
 # limitations under the License.
 # ========= Copyright 2023-2024 @ CAMEL-AI.org. All Rights Reserved. =========
 
-from .common import extract_pattern
-from .document_toolkit import DocumentProcessingToolkit
-from .enhanced_role_playing import (
-    OwlGAIARolePlaying,
-    OwlRolePlaying,
-    arun_society,
-    run_society,
-)
-from .gaia import GAIABenchmark
+from .registry import ModelRegistry
 
 __all__ = [
-    "extract_pattern",
-    "OwlRolePlaying",
-    "OwlGAIARolePlaying",
-    "run_society",
-    "arun_society",
-    "GAIABenchmark",
-    "DocumentProcessingToolkit",
+    "ModelRegistry",
 ]

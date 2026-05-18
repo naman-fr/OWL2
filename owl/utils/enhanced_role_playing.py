@@ -12,18 +12,15 @@
 # limitations under the License.
 # ========= Copyright 2023-2024 @ CAMEL-AI.org. All Rights Reserved. =========
 
-from typing import Dict, List, Optional, Tuple
 import threading
-
+from copy import deepcopy
+from typing import Dict, List, Optional, Tuple
 
 from camel.agents import ChatAgent
-from camel.responses import ChatAgentResponse
-from camel.messages.base import BaseMessage
-from camel.societies import RolePlaying
 from camel.logger import get_logger
-
-
-from copy import deepcopy
+from camel.messages.base import BaseMessage
+from camel.responses import ChatAgentResponse
+from camel.societies import RolePlaying
 
 logger = get_logger(__name__)
 

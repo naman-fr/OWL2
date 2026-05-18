@@ -45,12 +45,21 @@
 
 <div align="center">
 
-🦉 OWL is a cutting-edge framework for multi-agent collaboration that pushes the boundaries of task automation, built on top of the [CAMEL-AI Framework](https://github.com/camel-ai/camel).
+🦉 OWL-Workbench is a production-ready multi-agent automation platform built upon the pioneering OWL research repository. It extends the core OWL framework with industry-grade infrastructure, modular skill plugins, an interchangeable Model Registry, robust FastAPI gateways, and full observability using Prometheus.
 
-Our vision is to revolutionize how AI agents collaborate to solve real-world tasks. By leveraging dynamic agent interactions, OWL enables more natural, efficient, and robust task automation across diverse domains.
+Our vision is to revolutionize how AI agents collaborate to solve real-world tasks. By leveraging dynamic agent interactions, OWL-Workbench enables more natural, efficient, and robust task automation across diverse domains.
 
 If you find this repo useful, please consider citing our work ([citation](#-cite)).
 </div>
+
+## 🏗 OWL-Workbench Architecture
+
+The transformed OWL-Workbench platform features:
+- **Modular Model Registry**: Easily swap LLMs (OpenAI, DeepSeek, local models) using `config/models_default.yaml`.
+- **Extensible Skill Plugins**: Expand agent capabilities effortlessly with `CodeExecutionSkill`, `DocumentSummarizerSkill`, `WebSearchSkill`, etc.
+- **FastAPI Gateway**: Integrated REST API for task queuing and execution.
+- **Observability**: Prometheus metrics and Grafana dashboards via `docker-compose`.
+- **RAG Adapters**: Built-in REST and gRPC adapters to augment agents with local knowledge.
 
 ![](./assets/owl_architecture.png)
 
@@ -285,7 +294,10 @@ pip install -r requirements.txt --use-pep517
 # Fastest and recommended for most users
 docker compose up -d
 
-# Run OWL inside the container
+# The platform also starts a FastAPI gateway on port 8000, 
+# Prometheus on port 9090, and Grafana on port 3000.
+
+# Run OWL CLI inside the container
 docker compose exec owl bash
 cd .. && source .venv/bin/activate
 playwright install-deps

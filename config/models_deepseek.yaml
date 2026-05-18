@@ -1,0 +1,60 @@
+# ============================================================================
+# OWL Model Configuration — DeepSeek
+# ============================================================================
+# Replaces the standalone run_deepseek.py with a config file.
+#
+# Usage:
+#   python examples/run.py --models-config config/models_deepseek.yaml
+#
+# Requires: DEEPSEEK_API_KEY in your .env or environment variables.
+# See: https://platform.deepseek.com/api_keys
+# ============================================================================
+
+models:
+  web_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  document_processing_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  reasoning_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  image_analysis_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  browsing_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  planning_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  coordinator_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0
+
+  task_agent:
+    platform: deepseek
+    model_type: deepseek-chat
+    config:
+      temperature: 0

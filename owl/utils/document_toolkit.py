@@ -12,25 +12,26 @@
 # limitations under the License.
 # ========= Copyright 2023-2024 @ CAMEL-AI.org. All Rights Reserved. =========
 
-from camel.loaders import UnstructuredIO
-from camel.toolkits.base import BaseToolkit
-from camel.toolkits.function_tool import FunctionTool
-from camel.toolkits import ImageAnalysisToolkit, ExcelToolkit
-from camel.utils import retry_on_error
-from camel.logger import get_logger
-from camel.models import BaseModelBackend
-from chunkr_ai import Chunkr
-import requests
-import mimetypes
+import asyncio
 import json
-from typing import List, Optional, Tuple, Literal
-from urllib.parse import urlparse
+import mimetypes
 import os
 import subprocess
-import xmltodict
-import nest_asyncio
 import traceback
-import asyncio
+from typing import List, Literal, Optional, Tuple
+from urllib.parse import urlparse
+
+import nest_asyncio
+import requests
+import xmltodict
+from camel.loaders import UnstructuredIO
+from camel.logger import get_logger
+from camel.models import BaseModelBackend
+from camel.toolkits import ExcelToolkit, ImageAnalysisToolkit
+from camel.toolkits.base import BaseToolkit
+from camel.toolkits.function_tool import FunctionTool
+from camel.utils import retry_on_error
+from chunkr_ai import Chunkr
 from crawl4ai import AsyncWebCrawler
 
 nest_asyncio.apply()

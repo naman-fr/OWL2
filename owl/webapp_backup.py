@@ -12,12 +12,13 @@
 # limitations under the License.
 # ========= Copyright 2023-2024 @ CAMEL-AI.org. All Rights Reserved. =========
 # Import from the correct module path
-from utils import run_society
-import os
-import gradio as gr
-from typing import Tuple, List, Dict
 import importlib
-from dotenv import load_dotenv, set_key, find_dotenv, unset_key
+import os
+from typing import Dict, List, Tuple
+
+import gradio as gr
+from dotenv import find_dotenv, load_dotenv, set_key, unset_key
+from utils import run_society
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
 

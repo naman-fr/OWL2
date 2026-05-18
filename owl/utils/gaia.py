@@ -19,17 +19,17 @@ import json
 import random
 import re
 import string
-import pandas as pd
 from pathlib import Path
-from typing import Any, Dict, List, Literal, Optional, Union, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
-from tqdm import tqdm
+import pandas as pd
 from camel.benchmarks import BaseBenchmark
-from camel.tasks import Task
 from camel.logger import get_logger
+from camel.tasks import Task
+from tqdm import tqdm
 
 from .common import extract_pattern
-from .enhanced_role_playing import run_society, OwlGAIARolePlaying
+from .enhanced_role_playing import OwlGAIARolePlaying, run_society
 
 logger = get_logger(__name__)
 

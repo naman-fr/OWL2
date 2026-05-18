@@ -1,0 +1,66 @@
+# ============================================================================
+# OWL Model Configuration — Default (OpenAI)
+# ============================================================================
+# This file maps agent roles to their LLM backend configurations.
+# Used by ModelRegistry.from_yaml() to eliminate hardcoded model definitions.
+#
+# Usage:
+#   python examples/run.py --models-config config/models_default.yaml
+#
+# Each role must specify:
+#   platform   — one of: openai, anthropic, deepseek, gemini, groq, qwen, vllm, mistral, ollama
+#   model_type — model identifier (e.g., gpt-4o-mini, deepseek-chat)
+#   config     — optional dict passed to ModelFactory (temperature, max_tokens, etc.)
+# ============================================================================
+
+models:
+  # ── Worker agents ──────────────────────────────────────────────────────
+  web_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  document_processing_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  reasoning_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  image_analysis_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  # ── Browser toolkit models ─────────────────────────────────────────────
+  browsing_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  planning_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  # ── Workforce coordination ─────────────────────────────────────────────
+  coordinator_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0
+
+  task_agent:
+    platform: openai
+    model_type: gpt-4o-mini
+    config:
+      temperature: 0

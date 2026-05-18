@@ -11,11 +11,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ========= Copyright 2023-2024 @ CAMEL-AI.org. All Rights Reserved. =========
-import sys
+
+"""
+OWL Workforce runner with pluggable model configuration.
+
+This module replaces the per-provider run_*.py scripts with a single entry
+point that accepts a YAML model config via ``--models-config``.
+
+Usage:
+    # Use default OpenAI config:
+    python examples/run.py
+
+    # Use DeepSeek:
+    python examples/run.py --models-config config/models_deepseek.yaml
+
+    # Override the task:
+    python examples/run.py --models-config config/models_default.yaml \\
+        "Summarize the latest OWL paper"
+
+See config/models_default.yaml for the config schema.
+"""
+
+import argparse
 import pathlib
+import sys
+
 from dotenv import load_dotenv
-from camel.models import ModelFactory
 from camel.agents import ChatAgent
+from camel.models import ModelFactory
 from camel.toolkits import (
     FunctionTool,
     CodeExecutionToolkit,
@@ -28,12 +51,12 @@ from camel.toolkits import (
 from camel.types import ModelPlatformType, ModelType
 from camel.logger import set_log_level
 from camel.tasks.task import Task
-
 from camel.societies import Workforce
 
 from owl.utils import DocumentProcessingToolkit
+from owl.models import ModelRegistry
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List, Optional
 
 base_dir = pathlib.Path(__file__).parent.parent
 env_path = base_dir / "owl" / ".env"
@@ -41,43 +64,41 @@ load_dotenv(dotenv_path=str(env_path))
 
 set_log_level(level="DEBUG")
 
+# ── Default model factory (backwards-compatible fallback) ────────────────
 
-def construct_agent_list() -> List[Dict[str, Any]]:
-    web_model = ModelFactory.create(
+def _default_model():
+    """Create the default OpenAI model (legacy behavior)."""
+    return ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
+        model_type=ModelType.GPT_4O_MINI,
         model_config_dict={"temperature": 0},
     )
 
-    document_processing_model = ModelFactory.create(
-        model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
-        model_config_dict={"temperature": 0},
-    )
 
-    reasoning_model = ModelFactory.create(
-        model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
-        model_config_dict={"temperature": 0},
-    )
+def _get_model(registry: Optional[ModelRegistry], role: str):
+    """Get a model from the registry, or fall back to defaults."""
+    if registry is not None and registry.has_role(role):
+        return registry.get(role)
+    return _default_model()
 
-    image_analysis_model = ModelFactory.create(
-        model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
-        model_config_dict={"temperature": 0},
-    )
 
-    browsing_model = ModelFactory.create(
-        model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
-        model_config_dict={"temperature": 0},
-    )
+# ── Agent construction ───────────────────────────────────────────────────
 
-    planning_model = ModelFactory.create(
-        model_platform=ModelPlatformType.OPENAI,
-        model_type=ModelType.GPT_5_2,
-        model_config_dict={"temperature": 0},
-    )
+def construct_agent_list(
+    registry: Optional[ModelRegistry] = None,
+) -> List[Dict[str, Any]]:
+    """Construct agent list using models from the registry (or defaults).
+
+    Args:
+        registry: Optional ModelRegistry loaded from YAML config.
+                  If None, falls back to default OpenAI models.
+    """
+    web_model = _get_model(registry, "web_agent")
+    document_processing_model = _get_model(registry, "document_processing_agent")
+    reasoning_model = _get_model(registry, "reasoning_agent")
+    image_analysis_model = _get_model(registry, "image_analysis_agent")
+    browsing_model = _get_model(registry, "browsing_agent")
+    planning_model = _get_model(registry, "planning_agent")
 
     search_toolkit = SearchToolkit()
     document_processing_toolkit = DocumentProcessingToolkit(
@@ -170,22 +191,19 @@ Here are some tips that help you perform web search:
     return agent_list
 
 
-def construct_workforce() -> Workforce:
-    coordinator_agent_kwargs = {
-        "model": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_5_2,
-            model_config_dict={"temperature": 0},
-        )
-    }
+def construct_workforce(
+    registry: Optional[ModelRegistry] = None,
+) -> Workforce:
+    """Construct workforce with models from registry (or defaults).
 
-    task_agent_kwargs = {
-        "model": ModelFactory.create(
-            model_platform=ModelPlatformType.OPENAI,
-            model_type=ModelType.GPT_5_2,
-            model_config_dict={"temperature": 0},
-        )
-    }
+    Args:
+        registry: Optional ModelRegistry loaded from YAML config.
+    """
+    coordinator_model = _get_model(registry, "coordinator_agent")
+    task_model = _get_model(registry, "task_agent")
+
+    coordinator_agent_kwargs = {"model": coordinator_model}
+    task_agent_kwargs = {"model": task_model}
 
     task_agent = ChatAgent(
         "You are a helpful assistant that can decompose tasks and assign tasks to workers.",
@@ -203,7 +221,7 @@ def construct_workforce() -> Workforce:
         coordinator_agent=coordinator_agent,
     )
 
-    agent_list = construct_agent_list()
+    agent_list = construct_agent_list(registry)
 
     for agent_dict in agent_list:
         workforce.add_single_agent_worker(
@@ -214,20 +232,58 @@ def construct_workforce() -> Workforce:
     return workforce
 
 
+def parse_args() -> argparse.Namespace:
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(
+        description="OWL Workforce runner with pluggable model configuration.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python examples/run.py
+  python examples/run.py --models-config config/models_deepseek.yaml
+  python examples/run.py --models-config config/models_default.yaml "Your task here"
+        """,
+    )
+    parser.add_argument(
+        "--models-config",
+        type=str,
+        default=None,
+        help="Path to a YAML model config file (see config/models_default.yaml).",
+    )
+    parser.add_argument(
+        "task",
+        nargs="?",
+        default=None,
+        help="Task prompt to run. If not provided, uses a default example task.",
+    )
+    return parser.parse_args()
+
+
 def main():
     r"""Main function to run the OWL system with an example question."""
+    args = parse_args()
+
+    # Load model registry from config if provided
+    registry = None
+    if args.models_config:
+        registry = ModelRegistry.from_yaml(args.models_config)
+        print(f"\033[92m✓ Loaded models config: {args.models_config}\033[0m")
+        for role, spec in registry.list_registered().items():
+            print(f"  {role}: {spec['platform']}/{spec['model_type']}")
+
     # Default research question
-    default_task_prompt = "Use Browser Toolkit to summarize the github stars, fork counts, etc. of camel-ai's owl framework, and write the numbers into a python file using the plot package, save it locally, and run the generated python file. Note: You have been provided with the necessary tools to complete this task."
-
-    # Override default task if command line argument is provided
-    task_prompt = sys.argv[1] if len(sys.argv) > 1 else default_task_prompt
-
-    task = Task(
-        content=task_prompt,
+    default_task_prompt = (
+        "Use Browser Toolkit to summarize the github stars, fork counts, etc. "
+        "of camel-ai's owl framework, and write the numbers into a python file "
+        "using the plot package, save it locally, and run the generated python "
+        "file. Note: You have been provided with the necessary tools to "
+        "complete this task."
     )
 
-    workforce = construct_workforce()
+    task_prompt = args.task or default_task_prompt
 
+    task = Task(content=task_prompt)
+    workforce = construct_workforce(registry)
     processed_task = workforce.process_task(task)
 
     # Output the result

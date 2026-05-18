@@ -1,0 +1,12 @@
+line-length = 100
+target-version = "py311"
+
+[lint]
+select = [
+    "F",  # pyflakes
+    "I",  # isort
+]
+ignore = [
+    "F401", # unused imports (lots of existing issues)
+    "F841", # unused variables
+]
